@@ -55,6 +55,12 @@ def run(output_path, input_file, cascades, seed, force, time_period):
         src = R.choice(nodes)
         ticking_edges = g.out_edges(src, data=True)
         infected_nodes = set([ src ])
+        cascade_data.append({
+            'cascade_id': idx,
+            'src': '0',
+            'dst': '0',
+            'at': 0
+        })
         while cur_time < time_period:
             # - If the whole network (or reachable component) was infected, then stop
             if len(ticking_edges) == 0:
