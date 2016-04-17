@@ -44,7 +44,7 @@ def run(output_path, input_file, cascades, seed, force, time_period):
               file=sys.stderr)
         sys.exit(-1)
 
-    g = nx.read_edgelist(input_file).to_directed()
+    g = nx.read_edgelist(input_file, create_using=nx.DiGraph())
 
     # reduce source of randomness here.
     nodes = sorted(g.nodes())
