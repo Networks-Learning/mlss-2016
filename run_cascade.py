@@ -57,8 +57,8 @@ def run(output_path, input_file, cascades, seed, force, time_period):
         infected_nodes = set([ src ])
         cascade_data.append({
             'cascade_id': idx,
-            'src': '0',
-            'dst': '0',
+            'src': src, # Initially the 'src' infects itself.
+            'dst': src,
             'at': 0
         })
         while cur_time < time_period:
