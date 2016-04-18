@@ -6,8 +6,23 @@ import sys
 import csv
 import numpy as np
 import cvxpy as CVX
+import networkx as nx
 from collections import defaultdict
 
+
+def get_soln_A(src_graph):
+    '''Read the "correct" solution for a graph.'''
+    g = nx.read_edgelist(src_graph, create_using=nx.DiGraph())
+    nodes = [str(y) for y in sorted([int(x) for x in g.nodes()])]
+    num_nodes = len(nodes)
+    A = np.zeros((num_nodes, num_nodes), dtype=float)
+    for i in range(num_nodes):
+        for j in range(num_nodes):
+            i_, j_ = str(i), str(j)
+            if j_ in g[i_]:
+                A[i, j] = g[i_][j_]['act_prob']
+
+    return A
 
 # @click.command()
 # @click.option('-i', '--input', 'input_file',
