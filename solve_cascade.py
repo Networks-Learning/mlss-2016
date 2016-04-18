@@ -109,7 +109,7 @@ def run(input_file, time_period, num_nodes):
         res = prob.solve(verbose=True)
         probs.append(prob)
         results.append(res)
-        if Ai.value is not None and prob.status in ['optimal', 'optimal_inaccurate'] :
+        if prob.status in ['optimal', 'optimal_inaccurate']:
             A[:, target_node] = np.asarray(Ai.value).squeeze()
         else:
             A[:, target_node] = -1
