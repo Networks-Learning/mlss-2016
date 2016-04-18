@@ -36,7 +36,7 @@ def get_next_tick(edges):
               is_flag=True,
               help='Force to overwrite files.')
 @click.option('-T', '--time', 'time_period',
-              default=1,
+              default=1.0,
               help='Time period for which to run.')
 def run(output_path, input_file, cascades, seed, force, time_period):
     if os.path.exists(output_path) and not force:
@@ -71,12 +71,13 @@ def run(output_path, input_file, cascades, seed, force, time_period):
             cur_time = cur_time + dt
 
             # - Record data
-            cascade_data.append({
-                'cascade_id': idx,
-                'src': inf_edge[0],
-                'dst': inf_edge[1],
-                'at': cur_time
-            })
+            if cur_time < time_period:
+                cascade_data.append({
+                    'cascade_id': idx,
+                    'src': inf_edge[0],
+                    'dst': inf_edge[1],
+                    'at': cur_time
+                })
 
             # - Add all out_edges from dst to ticking_edges
             ticking_edges += g.out_edges(inf_edge[1], data=True)
@@ -87,10 +88,6 @@ def run(output_path, input_file, cascades, seed, force, time_period):
             # - Remove edges from ticking_edges which go to infected_nodes
             ticking_edges = [edge for edge in ticking_edges
                              if edge[1] not in infected_nodes]
-
-    if len(cascade_data) == 0:
-        print('No data was generated.', file=sys.stderr)
-        sys.exit(-1)
 
     with open(output_path, 'w') as output_file:
         # w = csv.DictWriter(output_file, cascade_data[0].keys())
