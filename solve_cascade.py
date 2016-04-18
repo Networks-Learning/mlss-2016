@@ -34,7 +34,7 @@ def get_soln_A(src_graph):
 #               prompt='Time horizon.',
 #               default=1.0,
 #               help='Time horizon (after which, no data was collected).')
-def run(input_file, time_period, num_nodes):
+def run_with_cvx(input_file, time_period, num_nodes):
     cascades = defaultdict(lambda : [])
 
     # Reading data
