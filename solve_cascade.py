@@ -34,8 +34,7 @@ def get_soln_A(src_graph):
 #               prompt='Time horizon.',
 #               default=1.0,
 #               help='Time horizon (after which, no data was collected).')
-def run(input_file, time_period):
-    nodes = set()
+def run(input_file, time_period, num_nodes):
     cascades = defaultdict(lambda : [])
 
     # Reading data
@@ -44,12 +43,10 @@ def run(input_file, time_period):
         cascade_id = row['cascade_id']
         dst        = int(row['dst'])
         at         = float(row['at'])
-
-        nodes.add(dst)
+        assert at < time_period, "Infection after observation period."
         cascades[cascade_id].append((at, dst))
 
     # Start definition of the problem
-    num_nodes = len(nodes)
 
     # Sort according to time
     for cascade_id in cascades.keys():
@@ -63,7 +60,7 @@ def run(input_file, time_period):
                possible_edges.add((c[j][1], c[i][1]))
 
     # Formulating the problem for each row of influence matrix A
-    A = []
+    A = np.zeros((num_nodes, num_nodes), dtype=float)
     probs = []
     results = []
 
@@ -112,7 +109,10 @@ def run(input_file, time_period):
         res = prob.solve(verbose=True)
         probs.append(prob)
         results.append(res)
-        A.append(Ai)
+        if Ai.value is not None and prob.status in ['optimal', 'optimal_inaccurate'] :
+            A[:, target_node] = np.asarray(Ai.value).squeeze()
+        else:
+            A[:, target_node] = -1
 
     return A, probs, results
 
