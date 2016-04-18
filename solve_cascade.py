@@ -86,7 +86,7 @@ def run(input_file, time_period, num_nodes):
                 # Node 'i' was not infected in this cascade
                 # TODO: Can be precomputed and vectorized
                 for j in range(len(c)):
-                    expr += Ai[j] * (c[j][0] - time_period)
+                    expr += Ai[c[j][1]] * (c[j][0] - time_period)
             else:
                 # Node 'i' was infected in this cascade
                 # TODO: Vectorize
@@ -96,8 +96,8 @@ def run(input_file, time_period, num_nodes):
                 for j in range(len(c)):
                     if c[j][0] < infection_time:
                         num_infected_before += 1
-                        expr += Ai[j] * (c[j][0] - infection_time)
-                        log_sum += Ai[j]
+                        expr += Ai[c[j][1]] * (c[j][0] - infection_time)
+                        log_sum += Ai[c[j][1]]
                     else:
                         break
 
