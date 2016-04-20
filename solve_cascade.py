@@ -109,7 +109,7 @@ def run_with_cvx(input_file, time_period, num_nodes):
         res = prob.solve(verbose=True)
         probs.append(prob)
         results.append(res)
-        if prob.status in ['optimal', 'optimal_inaccurate']:
+        if prob.status in [CVX.OPTIMAL, CVX.OPTIMAL_INACCURATE]:
             A[:, target_node] = np.asarray(Ai.value).squeeze()
         else:
             A[:, target_node] = -1
