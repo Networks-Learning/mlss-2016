@@ -57,8 +57,8 @@ def run(output_path, input_file, cascades, seed, force, time_period):
         infected_nodes = set([ src ])
         cascade_data.append({
             'cascade_id': idx,
-            'src': src, # Initially the 'src' infects itself.
-            'dst': src,
+            # 'src': src,
+            'dst': src, # Initially the 'src' is infected.
             'at': 0
         })
         while cur_time < time_period:
@@ -74,7 +74,7 @@ def run(output_path, input_file, cascades, seed, force, time_period):
             if cur_time < time_period:
                 cascade_data.append({
                     'cascade_id': idx,
-                    'src': inf_edge[0],
+                    # 'src': inf_edge[0],
                     'dst': inf_edge[1],
                     'at': cur_time
                 })
@@ -91,7 +91,7 @@ def run(output_path, input_file, cascades, seed, force, time_period):
 
     with open(output_path, 'w') as output_file:
         # w = csv.DictWriter(output_file, cascade_data[0].keys())
-        w = csv.DictWriter(output_file, ['cascade_id', 'src', 'dst', 'at'])
+        w = csv.DictWriter(output_file, ['cascade_id', 'dst', 'at'])
         w.writeheader()
         w.writerows(cascade_data)
 
