@@ -84,12 +84,12 @@ def run_with_cvx(input_file, time_period, num_nodes):
 
             if len(infection_time_arr) == 0:
                 # Node 'i' was not infected in this cascade
-                # TODO: Can be precomputed and vectorized
+                # NICE-TO-HAVE: Can be precomputed and vectorized
                 for j in range(len(c)):
                     expr += Ai[c[j][1]] * (c[j][0] - time_period)
             else:
                 # Node 'i' was infected in this cascade
-                # TODO: Vectorize
+                # NICE-TO-HAVE: Vectorize
                 infection_time = infection_time_arr[0]
                 num_infected_before = 0
                 log_sum = 0
@@ -102,7 +102,7 @@ def run_with_cvx(input_file, time_period, num_nodes):
                         break
 
                 if num_infected_before > 0:
-                    # This avoids np.log(0) term
+                    # This check avoids log(0) terms
                     expr += CVX.log(log_sum)
 
         prob = CVX.Problem(CVX.Maximize(expr), constraints)
@@ -116,3 +116,4 @@ def run_with_cvx(input_file, time_period, num_nodes):
 
     return A, probs, results
 
+# TODO: Add code for comparing the performance.
