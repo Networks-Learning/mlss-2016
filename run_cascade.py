@@ -1,20 +1,18 @@
 #!/usr/bin/env python
+
+# TODO: Test with Python2
+
 from __future__ import print_function
 import click
-import os
+import os.path as P
 import csv
 import sys
+import numpy as np
 import networkx as nx
 import random as R
-from math import log
 
+exp_r = np.random.exponential
 SEED = 42
-
-
-def get_next_tick(edges):
-    '''Returns the next 'tick' and the edge which caused it.'''
-    return sorted([(-log(1 - R.random()) / e[2]['act_prob'], e)
-                    for e in edges ])[0]
 
 
 @click.command()
@@ -38,10 +36,13 @@ def get_next_tick(edges):
 @click.option('-T', '--time', 'time_period',
               default=1.0,
               help='Time period for which to run.')
-def run(output_path, input_file, cascades, seed, force, time_period):
-    if os.path.exists(output_path) and not force:
-        print('Cannot overwrite output file', output_path, ' without --force',
-              file=sys.stderr)
+def run(output_path, input_file,
+        cascades, seed, force, time_period):
+
+    any_op_file_exists = P.exists(output_path)
+
+    if any_op_file_exists and not force:
+        print('Cannot overwrite output file without --force', file=sys.stderr)
         sys.exit(-1)
 
     g = nx.read_edgelist(input_file, create_using=nx.DiGraph())
@@ -53,48 +54,48 @@ def run(output_path, input_file, cascades, seed, force, time_period):
     for idx in range(cascades):
         cur_time = 0
         src = R.choice(nodes)
-        ticking_edges = g.out_edges(src, data=True)
+        ticking_edges = [(exp_r(1.0 / e[2]['act_prob']), e)
+                         for e in g.out_edges(src, data=True)]
         infected_nodes = set([ src ])
         cascade_data.append({
             'cascade_id': idx,
-            # 'src': src,
-            'dst': src, # Initially the 'src' is infected.
+            'dst': src, # Initially, the 'src' is infected.
             'at': 0
         })
-        while cur_time < time_period:
+        while True:
             # - If the whole network (or reachable component) was infected, then stop
             if len(ticking_edges) == 0:
                 break
 
             # - Calculate the next "tick" and the edge which ticked.
-            dt, inf_edge = get_next_tick(ticking_edges)
+            dt, inf_edge = sorted(ticking_edges)[0]
             cur_time = cur_time + dt
 
             # - Record data
             if cur_time < time_period:
                 cascade_data.append({
                     'cascade_id': idx,
-                    # 'src': inf_edge[0],
                     'dst': inf_edge[1],
                     'at': cur_time
                 })
+            else:
+                break
 
             # - Add all out_edges from dst to ticking_edges
-            ticking_edges += g.out_edges(inf_edge[1], data=True)
+            ticking_edges += [(exp_r(1.0 / e[2]['act_prob']), e)
+                              for e in g.out_edges(inf_edge[1], data=True)]
 
             # - Add source to infected_nodes
             infected_nodes.add(inf_edge[1])
 
             # - Remove edges from ticking_edges which go to infected_nodes
             ticking_edges = [edge for edge in ticking_edges
-                             if edge[1] not in infected_nodes]
+                             if edge[1][1] not in infected_nodes]
 
     with open(output_path, 'w') as output_file:
-        # w = csv.DictWriter(output_file, cascade_data[0].keys())
         w = csv.DictWriter(output_file, ['cascade_id', 'dst', 'at'])
         w.writeheader()
         w.writerows(cascade_data)
-
 
 
 if __name__ == '__main__':
