@@ -1,13 +1,17 @@
 # MLSS 2016
 
-This is the code we used for the tutorial session about networks learning in MLSS-2016.
-The tutorial is based on the Net-Rate algorithm described here:
+This is the code we used for the tutorial session about networks learning in
+MLSS-2016. The tutorial is based on the NetRate algorithm described here:
 
 > M. Gomez-Rodriguez, D. Balduzzi, B. Schölkopf. Uncovering the Temporal Dynamics of Diffusion Networks. The 28th International Conference on Machine Learning (ICML), 2011.
 
 ## Generation 
 
 The generation code is written in Python 3.
+
+### Requirements
+
+The requirements for data generation are in `requirements.txt`.
 
 ### Graph
 
@@ -36,10 +40,19 @@ that there are `50` nodes in the graph.
 `utils.py` contains code which can be used to calculate the performance
 of the solutions.
 
+#### Requirements
+  
+  - cvxpy
+  - scipy
+
 ### MATLAB
 
 `solve_cascade.m` uses CVX to solve the NetRate problem.
 `calc_score.m` defines the function which can calculate the performance.
+
+#### Requirements
+
+  - CVX
 
 ### Julia
 
