@@ -3,9 +3,11 @@
 import numpy as np
 
 def calc_score(A_pred, A_soln, eps=1e-6):
-    """Calculates the F1 score for a given activation against the ground truth.."""
+    """Calculates the F1 score for a given activation against the ground
+    truth."""
     # The A_pred may have some very small negative numbers as well.
     # So < eps == zero, and >= eps == non-zero
+    # eps = 1e-6 gives the same results for CVX+SCS solver as the LBFGS solution
 
     num_edges = np.sum(A_soln > eps)
     TP = np.sum(A_soln[A_pred > eps] >= eps)
