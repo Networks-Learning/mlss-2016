@@ -9,7 +9,7 @@ def Hawkes_log_lik(T, alpha_opt, lambda_opt, lambda_ti, survival, for_cvx=False)
         else:
             L += np.sum(np.log(lambda_opt + alpha_opt * lambda_ti[i]))
 
-        L -= lambda_opt * T[i] - alpha_opt * survival[i]
+        L -= lambda_opt * T[i] + alpha_opt * survival[i]
 
     return L
 
