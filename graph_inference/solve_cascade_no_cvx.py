@@ -86,6 +86,8 @@ for target_node in range(num_nodes):
     # Find which nodes can potentially have a connection to the ith node.
     Ai_mask = np.array([(j, target_node) in possible_edges
                         for j in range(num_nodes)], dtype=bool)
+
+    # Only create as many constraints as number of variables we have
     Ai_constraints = [(eps, None)] * Ai_mask.sum()
 
     for c_idx, key in enumerate(cascades_keys):
