@@ -1,11 +1,110 @@
 import cvxpy as CVX
 import numpy as np
-
-from sampleHawkes import sampleHawkes
-from preprocessEv import preprocessEv
-from Hawkes_log_lik import Hawkes_log_lik
-import plotHawkes as ph
 import matplotlib.pyplot as plt
+
+# MATLAB: see sampleHawkes.m
+
+def sampleHawkes(lambda_0, alpha_0, w, T, Nev, seed=None):
+    """Generates a sample of a Hawkes process until one of the following happens:
+      - The next generated event is after T
+      - Nev events have been generated.
+
+    Returns: a tuple with the event times and the last generated time.
+    """
+
+    np.random.seed(seed)
+
+    # First event is generated just as for a normal Poisson process.
+
+    tev = np.zeros(Nev)
+    n = 0
+    lambda_star = lambda_0
+    next_arrival_time = np.random.exponential(scale=1.0 / lambda_star)
+    tev[n] = next_arrival_time
+
+    # Generate the next events
+    n += 1
+    while n < Nev:
+        lambda_star = lambda_star + alpha_0
+        next_arrival_time += np.random.exponential(scale=1.0 / lambda_star)
+
+        if next_arrival_time < T:
+            d = np.random.rand()
+            lambda_s = lambda_0 + alpha_0 * np.sum(np.exp(-w * (next_arrival_time - tev[0:n])))
+
+            if d <= lambda_s / lambda_star:
+                tev[n] = next_arrival_time
+                lambda_star = lambda_s
+                n += 1
+        else:
+            break
+
+    tev = tev[0:n - 1]
+
+    if n == Nev:
+        Tend = tev[-1]
+    else:
+        Tend = T
+
+    return tev, Tend
+
+## MATLAB: preprocessEv.m
+
+def preprocessEv(tev, T, w):
+    lambda_ti = np.zeros_like(tev, dtype=float)
+    survival = 0
+
+    for i in range(len(tev)):
+        lambda_ti[i] = np.sum(np.exp(-w * (tev[i] - tev[0:i])))
+        survival += (1.0 / w) * (1.0 - np.exp(-w * (T - tev[i])))
+
+    return lambda_ti, survival
+
+## MATLAB: Hawkes_log_lik.m
+
+def Hawkes_log_lik(T, alpha_opt, lambda_opt, lambda_ti, survival, for_cvx=False):
+    # The implementation has to be different for CVX and numpy versions because
+    # CVX variables cannot handle the vectorized operations of Numpy  like
+    # np.sum and np.log.
+
+    L = 0
+    for i in range(len(lambda_ti)):
+        if for_cvx and len(lambda_ti) > 0:
+            L += CVX.sum_entries(CVX.log(lambda_opt + alpha_opt * lambda_ti[i]))
+        else:
+            L += np.sum(np.log(lambda_opt + alpha_opt * lambda_ti[i]))
+
+        L -= lambda_opt * T[i] + alpha_opt * survival[i]
+
+    return L
+
+import plotHawkes as ph
+
+## MATLAB: plotHawkes.m
+
+def plotHawkes(tev, l_0, alpha_0, w, T, res):
+    tvec = np.arange(0, T, step=T / res)
+
+    mu_t = (np.exp((alpha_0 - w) * tvec) + w * (1.0 / (alpha_0 - w)) *
+            (np.exp((alpha_0 - w) * tvec) - 1)) * l_0
+
+    plt.plot(tvec, mu_t, 'b-', linewidth=1.5)
+
+    colorLambda = ['r--', 'k--', 'g--', 'm--', 'c--']
+    colorEv = ['r+', 'k+', 'g+', 'm+', 'c+']
+
+    for i in range(len(tev)):
+        n = -1
+        l_t = np.zeros(len(tvec))
+
+        for t in tvec:
+            n += 1
+            l_t[n] = l_0 + alpha_0 * np.sum(np.exp(-w * (t - tev[i][tev[i] < t])))
+
+        plt.plot(tvec, l_t, colorLambda[i % len(colorLambda)])
+        plt.plot(tev[i], np.zeros(len(tev[i])), colorEv[i % len(colorEv)])
+
+##################################################
 
 # Simulation time
 T = 10
@@ -35,8 +134,9 @@ for i in range(Nsamples):
     lambda_ti[i], survival[i] = preprocessEv(tev[i], Tend[i], w)
 
 ph.plotHawkes(tev, lambda_0, alpha_0, w, T, 10000)
-plt.ion()
-plt.show()
+plt.ion()  # Make the plot interactive
+plt.show() # Show the plot. May not be needed in IPython
+
 
 ## Solution using CVX
 
