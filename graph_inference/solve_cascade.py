@@ -8,6 +8,8 @@ from collections import defaultdict
 # This file has been changed from a script friendly format to an interactive
 # session friendly version.
 
+## You have to make sure to set these parameters to be the same as the
+# parameters used to generate cascades.csv
 input_file = open('cascades.csv', 'r')
 time_period = 1.0
 num_nodes = 50

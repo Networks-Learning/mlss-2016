@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# TODO: Test with Python2
-
 from __future__ import print_function
 import click
 import os.path as P
@@ -54,6 +52,7 @@ def run(output_path, input_file,
     for idx in range(cascades):
         cur_time = 0
         src = R.choice(nodes)
+        # TODO: Generate different infection models.
         ticking_edges = [(exp_r(1.0 / e[2]['act_prob']), e)
                          for e in g.out_edges(src, data=True)]
         infected_nodes = set([ src ])
@@ -82,6 +81,7 @@ def run(output_path, input_file,
                 break
 
             # - Add all out_edges from dst to ticking_edges
+            # TODO: Generate different infection models.
             ticking_edges += [(exp_r(1.0 / e[2]['act_prob']), e)
                               for e in g.out_edges(inf_edge[1], data=True)]
 
