@@ -23,13 +23,13 @@ def f_factory(Ai_coef, Ai_log_coefs, Ai_mask):
 
     def f(x):
         v = Ai_coef[Ai_mask].dot(x)
-        # TODO: Can be vectorized better
         for log_coefs in Ai_log_coefs:
             if not np.all(log_coefs[Ai_mask] == 0):
                 v += np.log(log_coefs[Ai_mask].dot(x))
         return -v
 
     def f_prime(x):
+        # Copying the vector to avoid writing over the Coefficients.
         v_prime = Ai_coef[Ai_mask].copy()
         for log_coefs in Ai_log_coefs:
             if not np.all(log_coefs[Ai_mask] == 0):
@@ -38,8 +38,6 @@ def f_factory(Ai_coef, Ai_log_coefs, Ai_mask):
 
     return f, f_prime
 
-
-# def run_no_cvx(input_file, time_period, num_nodes):
 
 input_file = open('cascades.csv', 'r')
 time_period = 1.0
