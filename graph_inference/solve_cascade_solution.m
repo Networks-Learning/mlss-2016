@@ -1,5 +1,4 @@
 C = csvread('cascades.csv', 2); % Read the CSV, skipping the header line
-                                % C(:, 1) = cascade_id; C(:, 2) = dest_id; C(:, 3) = infection time
 num_nodes = 50;
 time_period = 1.0;
 
@@ -8,11 +7,9 @@ time_period = 1.0;
 
 cascade_ids = unique(C(:, 1));
 
-% Not all the edges are possible (if two nodes do not appear toguether in
-% any cascade, the MLE solution for this alpha is zero)
 possible_edges_arr = [];
 for c_idx = 1:size(cascade_ids, 1)
-    cascade = C(C(:, 1) == c_idx, :); 
+    cascade = C(C(:, 1) == c_idx, :);
     for ii = 1:size(cascade, 1)
         for j = 1:(ii - 1)
             possible_edges_arr(end + 1, :) = [cascade(j, 2), cascade(ii, 2)];
@@ -22,10 +19,10 @@ end
 
 possible_edges = unique(possible_edges_arr, 'rows');
 
-A = zeros(num_nodes, num_nodes); %influence parameters
+A = zeros(num_nodes, num_nodes);
 
-for target_node = 1:num_nodes % Distributed
-    cvx_begin % Optimization solver
+for target_node = 1:num_nodes
+    cvx_begin
         variable Ai(num_nodes);
         expression expr;
 
@@ -35,7 +32,7 @@ for target_node = 1:num_nodes % Distributed
 
             if size(infection_time, 1) == 0 % The node wasn't infected
                 for j = 1:size(cascade, 1)
-                    expr = expr + % Survival (log(S(T | t_j, alpha_ji)))
+                    expr = expr + Ai(cascade(j, 2) + 1) * (cascade(j, 3) - time_period);
                 end
             else % The node was infected
                 num_infected_before = 0;
@@ -43,8 +40,8 @@ for target_node = 1:num_nodes % Distributed
                 for j = 1:size(cascade, 1)
                     if cascade(j, 3) < infection_time
                         num_infected_before =  num_infected_before + 1;
-                        expr = expr + % Survival
-                        log_sum = log_sum + % Hazard
+                        expr = expr + Ai(cascade(j, 2) + 1) * (cascade(j, 3) - infection_time);
+                        log_sum = log_sum + Ai(cascade(j, 2) + 1);
                     else
                         break;
                     end
