@@ -6,10 +6,6 @@ from scipy import optimize as O
 from collections import defaultdict
 
 
-# This file has been changed from a script friendly format to an interactive
-# session friendly version.
-
-
 def f_factory(Ai_coef, Ai_log_coefs, Ai_mask):
     """
     Returns a pair of functions which calculate the negative log-likelihood
@@ -22,19 +18,15 @@ def f_factory(Ai_coef, Ai_log_coefs, Ai_mask):
     """
 
     def f(x):
-        v = Ai_coef[Ai_mask].dot(x)
-        for log_coefs in Ai_log_coefs:
-            if not np.all(log_coefs[Ai_mask] == 0):
-                v += np.log(log_coefs[Ai_mask].dot(x))
-        return -v
+        # TODO: Implement the log-likelihood.
+        raise NotImplementedError("Log-likelihood function not implemented.")
+        return 0
 
     def f_prime(x):
+        # TODO: Implement the gradient of the log-likelihood.
         # Copying the vector to avoid writing over the Coefficients.
-        v_prime = Ai_coef[Ai_mask].copy()
-        for log_coefs in Ai_log_coefs:
-            if not np.all(log_coefs[Ai_mask] == 0):
-                v_prime += log_coefs[Ai_mask] / log_coefs[Ai_mask].dot(x)
-        return -v_prime
+        raise NotImplementedError("Gradient function not implemented.")
+        return np.zeros_like(x)
 
     return f, f_prime
 

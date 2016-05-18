@@ -48,10 +48,12 @@ results = []
 
 
 def logSurvival(t_i, t_j, alpha_ji):
-    return - alpha_ji * (t_i - t_j)
+    # TODO
+    raise NotImplementedError('logSurvival not implemented.')
 
 def hazard(t_i, t_j, alpha_ji):
-    return alpha_ji
+    # TODO
+    raise NotImplementedError('hazard not implemented.')
 
 # These problems can be solved in parallel
 for target_node in range(num_nodes):
@@ -89,17 +91,12 @@ for target_node in range(num_nodes):
             if c[0][0] != infection_time:
                 # Do this only if the target_node wasn't the first node
                 # infected in the cascade.
-                # If it was the first node, then we cannot deduce anything
-                # about the incoming edges.
+                # If it was the first node (else branch), then we cannot deduce
+                # anything about the incoming edges.
                 log_sum = 0
                 for j in range(len(c)):
-                    t_j = c[j][0]
-                    alpha_ji = Ai[c[j][1]]
-                    if t_j < t_i:
-                        expr += logSurvival(t_i, t_j, alpha_ji)
-                        log_sum += hazard(t_i, t_j, alpha_ji)
-                    else:
-                        break
+                    # TODO
+                    pass
 
                 expr += CVX.log(log_sum)
 
