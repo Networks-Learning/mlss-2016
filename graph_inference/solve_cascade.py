@@ -8,19 +8,6 @@ from collections import defaultdict
 # This file has been changed from a script friendly format to an interactive
 # session friendly version.
 
-
-# @click.command()
-# @click.option('-i', '--input', 'input_file',
-#               type=click.File('r'),
-#               prompt='File with cascade info:',
-#               default='cascades.csv',
-#               help='File with cascade info.')
-# @click.option('-T', '--time', 'time_period',
-#               prompt='Time horizon.',
-#               default=1.0,
-#               help='Time horizon (after which, no data was collected).')
-# def run_with_cvx(input_file, time_period, num_nodes):
-
 input_file = open('cascades.csv', 'r')
 time_period = 1.0
 num_nodes = 50
@@ -42,7 +29,8 @@ for row in csv.DictReader(input_file):
 for cascade_id in cascades.keys():
     cascades[cascade_id] = sorted(cascades[cascade_id])
 
-# Possible edges
+# Possible edges: if we haven't seen an edge, the best estimate for it that
+# we have is that it does not exist.
 possible_edges = set()
 for c in cascades.values():
     for i in range(len(c)):
@@ -104,4 +92,3 @@ for target_node in range(num_nodes):
     else:
         A[:, target_node] = -1
 
-# return A, probs, results

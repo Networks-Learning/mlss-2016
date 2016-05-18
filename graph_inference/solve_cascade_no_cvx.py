@@ -85,8 +85,9 @@ for target_node in range(num_nodes):
     Ai_log_coefs = [np.zeros((num_nodes,), dtype=float)
                     for _ in cascades_keys]
 
-    Ai_mask = np.array([ (j, target_node) in possible_edges
-                          for j in range(num_nodes) ], dtype=bool)
+    # Find which nodes can potentially have a connection to the ith node.
+    Ai_mask = np.array([(j, target_node) in possible_edges
+                        for j in range(num_nodes)], dtype=bool)
     Ai_constraints = [(eps, None)] * Ai_mask.sum()
 
     for c_idx, key in enumerate(cascades_keys):
@@ -128,8 +129,4 @@ for target_node in range(num_nodes):
 
     statuses.append(status)
     results.append(res)
-
-# return A, statuses, results
-
-
 
