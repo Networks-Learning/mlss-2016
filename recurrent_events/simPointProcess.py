@@ -9,7 +9,7 @@ from Hawkes_log_lik import Hawkes_log_lik
 T = 10
 
 # Maximum number of events per realization
-maxNev = 200
+maxNev = 50
 
 # Base intensity
 lambda_0 = 1
@@ -21,7 +21,7 @@ alpha_0 = 0.5
 w = 1
 
 # Number of samples to take
-Nsamples = 50
+Nsamples = 200
 
 tev       = [ None ] * Nsamples
 Tend      = [ None ] * Nsamples
@@ -52,3 +52,9 @@ prob = CVX.Problem(
 
 res = prob.solve(verbose=True)
 
+
+error_alpha = (alpha_opt.value - alpha_0) if alpha_0 > 0 else 0
+error_lambda_0 = (lambda_opt.value - lambda_0)
+
+print('error_alpha = {}, error_lambda_0 = {}'
+      .format(error_alpha, error_lambda_0))

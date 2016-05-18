@@ -10,7 +10,7 @@ def sampleHawkes(lambda_0, alpha_0, w, T, Nev, seed=None):
 
     np.random.seed(seed)
 
-    # First event is generated just as for a normal poisson process.
+    # First event is generated just as for a normal Poisson process.
 
     tev = np.zeros(Nev)
     n = 0
@@ -26,7 +26,7 @@ def sampleHawkes(lambda_0, alpha_0, w, T, Nev, seed=None):
 
         if next_arrival_time < T:
             d = np.random.rand()
-            lambda_s = lambda_0 + alpha_0 * np.sum(np.exp(-w * (next_arrival_time - tev[0:n - 1])))
+            lambda_s = lambda_0 + alpha_0 * np.sum(np.exp(-w * (next_arrival_time - tev[0:n])))
 
             if d <= lambda_s / lambda_star:
                 tev[n] = next_arrival_time
@@ -35,10 +35,6 @@ def sampleHawkes(lambda_0, alpha_0, w, T, Nev, seed=None):
         else:
             break
 
-        # TODO: Should be increased here, or only in the 'then' branch above?
-        # n += 1
-
-    # TODO: Verify that this is correct.
     tev = tev[0:n - 1]
 
     if n == Nev:
