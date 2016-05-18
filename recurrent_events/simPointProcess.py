@@ -4,12 +4,14 @@ import numpy as np
 from sampleHawkes import sampleHawkes
 from preprocessEv import preprocessEv
 from Hawkes_log_lik import Hawkes_log_lik
+import plotHawkes as ph
+import matplotlib.pyplot as plt
 
 # Simulation time
 T = 10
 
 # Maximum number of events per realization
-maxNev = 50
+maxNev = 200
 
 # Base intensity
 lambda_0 = 1
@@ -21,7 +23,7 @@ alpha_0 = 0.5
 w = 1
 
 # Number of samples to take
-Nsamples = 200
+Nsamples = 5
 
 tev       = [ None ] * Nsamples
 Tend      = [ None ] * Nsamples
@@ -32,7 +34,9 @@ for i in range(Nsamples):
     tev[i], Tend[i] = sampleHawkes(lambda_0, alpha_0, w, T, maxNev)
     lambda_ti[i], survival[i] = preprocessEv(tev[i], Tend[i], w)
 
-# TODO: Plotting function
+ph.plotHawkes(tev, lambda_0, alpha_0, w, T, 10000)
+plt.ion()
+plt.show()
 
 ## Solution using CVX
 
