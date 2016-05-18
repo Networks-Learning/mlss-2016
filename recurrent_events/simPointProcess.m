@@ -2,11 +2,11 @@ close
 clear 
 %% Parameters
 T=10; % simulation time
-maxNev= 200; %maximum number of events per realization
+maxNev= 50; %maximum number of events per realization
 lambda_0= 1; %base intensity
 alpha_0 = 0.5; % self-excitation parameter. Set alpha_0 = 0 to generate samples from a Poisson process 
 w = 1; % decay of the exponential kernel
-Nsamples= 5; %number of realizations of the Hawkes process
+Nsamples= 20; %number of realizations of the Hawkes process
 tev=cell(1,Nsamples);
 Tend=zeros(1,Nsamples);
 lambda_ti=cell(1,Nsamples);
@@ -44,6 +44,5 @@ cvx_end
 echo off
 
 %% Estimation error
-error_alpha  = abs(alpha_0-alpha_opt)/alpha_0
-error_lambda = abs(lambda_0-lambda_opt)/lambda_0
-
+error_alpha  = abs(alpha_0-alpha_opt)
+error_lambda = abs(lambda_0-lambda_opt)
