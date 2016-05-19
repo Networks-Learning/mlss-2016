@@ -1,4 +1,4 @@
-C = csvread('cascades.csv', 2); % Read the CSV, skipping the header line
+C = csvread('cascades.csv', 1); % Read the CSV, skipping the header line
                                 % C(:, 1) = cascade_id; C(:, 2) = dest_id; C(:, 3) = infection time
 num_nodes = 50;
 time_period = 1.0;
@@ -15,7 +15,7 @@ for c_idx = 1:size(cascade_ids, 1)
     cascade = C(C(:, 1) == c_idx, :);
     for ii = 1:size(cascade, 1)
         for j = 1:(ii - 1)
-            possible_edges_arr(end + 1, :) = [cascade(j, 2), cascade(ii, 2)];
+            possible_edges_arr(end + 1, :) = [cascade(j, 2)+1, cascade(ii, 2)+1];
         end
     end
 end
@@ -29,23 +29,23 @@ for target_node = 1:num_nodes % Distributed
         variable Ai(num_nodes);
         expression expr;
 
-        for c_idx = 1:size(cascade_ids, 1)
+        for c_idx = 0:size(cascade_ids, 1)-1
             cascade = C(C(:, 1) == c_idx, :);
-            infection_time = cascade(cascade(:, 2) == target_node, 3);
+            infection_time = cascade(cascade(:, 2)+1 == target_node, 3);
 
             if size(infection_time, 1) == 0 % The node wasn't infected
                 for j = 1:size(cascade, 1)
                     expr = expr + % TODO: Survival (log(S(T | t_j, alpha_ji)))
                 end
             else % The node was infected
-                if cascade(1, 3) <> infection_time
+                if cascade(1, 3) ~= infection_time
                     % Do this only if this node wasn't the first node infected.
                     % If this was the first node infected, then we cannot
                     % deduce anything about the incoming edges.
                     expression log_sum;
 
                     for j = 1:size(cascade, 1)
-                        % TODO
+                        % TODO ==> Complete the  Log-Likelihood
                     end
 
                     expr = expr + log(log_sum);
@@ -66,3 +66,5 @@ for target_node = 1:num_nodes % Distributed
 
     A(:, target_node) = Ai;
 end
+
+[F1, precision, recall] = calc_score(A, A_soln, 1e-6)
