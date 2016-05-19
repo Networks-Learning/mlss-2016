@@ -95,7 +95,8 @@ for target_node in range(num_nodes):
                 # anything about the incoming edges.
                 log_sum = 0
                 for j in range(len(c)):
-                    # TODO
+                    # TODO => Complete the Log-Likelihood if
+                    # the node was infected.
                     pass
 
                 expr += CVX.log(log_sum)
