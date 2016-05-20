@@ -44,8 +44,16 @@ for target_node = 1:num_nodes % Distributed
                     % deduce anything about the incoming edges.
                     expression log_sum;
 
+                    t_i = infection_time;
                     for j = 1:size(cascade, 1)
-                        % TODO ==> Complete the  Log-Likelihood
+                        t_j = cascade(j, 3); % Infection time of 'j'
+
+                        if t_j < t_i
+                            alpha_ji = Ai(cascade(j, 2) + 1);
+                            % TODO ==> Complete the  Log-Likelihood
+                            % expr = expr + ...
+                            % log_sum = log_sum + ...
+                        end
                     end
 
                     expr = expr + log(log_sum);
@@ -66,5 +74,7 @@ for target_node = 1:num_nodes % Distributed
 
     A(:, target_node) = Ai;
 end
+
+A_soln = dlmread('solution.csv'); % This is the true A matrix.
 
 [F1, precision, recall] = calc_score(A, A_soln, 1e-6)

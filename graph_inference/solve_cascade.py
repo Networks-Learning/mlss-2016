@@ -4,6 +4,7 @@ import csv
 import numpy as np
 import cvxpy as CVX
 from collections import defaultdict
+import utils as U
 
 # This file has been changed from a script friendly format to an interactive
 # session friendly version.
@@ -95,8 +96,14 @@ for target_node in range(num_nodes):
                 # anything about the incoming edges.
                 log_sum = 0
                 for j in range(len(c)):
-                    # TODO
-                    pass
+                    t_j = c[j][0]
+                    alpha_ji = Ai[c[j][1]]
+
+                    if t_j < t_i:
+                        # TODO
+                        # expr += ...
+                        # log_sum += ...
+                        pass
 
                 expr += CVX.log(log_sum)
 
@@ -109,3 +116,7 @@ for target_node in range(num_nodes):
     else:
         A[:, target_node] = -1
 
+
+A_soln = np.loadtxt('solution.csv', delimiter=',')
+
+print(U.calc_score(A, A_soln))
