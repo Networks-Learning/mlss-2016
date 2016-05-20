@@ -78,8 +78,6 @@ def Hawkes_log_lik(T, alpha_opt, lambda_opt, lambda_ti, survival, for_cvx=False)
 
     return L
 
-import plotHawkes as ph
-
 ## MATLAB: plotHawkes.m
 
 def plotHawkes(tev, l_0, alpha_0, w, T, res):
@@ -133,7 +131,7 @@ for i in range(Nsamples):
     tev[i], Tend[i] = sampleHawkes(lambda_0, alpha_0, w, T, maxNev)
     lambda_ti[i], survival[i] = preprocessEv(tev[i], Tend[i], w)
 
-ph.plotHawkes(tev, lambda_0, alpha_0, w, T, 10000)
+plotHawkes(tev, lambda_0, alpha_0, w, T, 10000)
 plt.ion()  # Make the plot interactive
 plt.show() # Show the plot. May not be needed in IPython
 
