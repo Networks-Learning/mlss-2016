@@ -4,6 +4,7 @@ import csv
 import numpy as np
 import cvxpy as CVX
 from collections import defaultdict
+import utils as U
 
 # This file has been changed from a script friendly format to an interactive
 # session friendly version.
@@ -110,3 +111,7 @@ for target_node in range(num_nodes):
     else:
         A[:, target_node] = -1
 
+
+A_soln = np.loadtxt('solution.csv', delimiter=',')
+
+print(U.calc_score(A, A_soln))
