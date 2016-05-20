@@ -50,12 +50,10 @@ def Hawkes_log_lik(T, alpha_opt, lambda_opt, lambda_ti, survival, for_cvx=False)
 
     return L
 
-import plotHawkes as ph
-
 ## MATLAB: plotHawkes.m
 
-def plotHawkes(tev, l_0, alpha_0, w, T, res):
-    tvec = np.arange(0, T, step=T / res)
+def plotHawkes(tev, l_0, alpha_0, w, T, resolution):
+    tvec = np.arange(0, T, step=T / float(resolution))
 
     mu_t = (np.exp((alpha_0 - w) * tvec) + w * (1.0 / (alpha_0 - w)) *
             (np.exp((alpha_0 - w) * tvec) - 1)) * l_0
@@ -105,7 +103,7 @@ for i in range(Nsamples):
     tev[i], Tend[i] = sampleHawkes(lambda_0, alpha_0, w, T, maxNev)
     lambda_ti[i], survival[i] = preprocessEv(tev[i], Tend[i], w)
 
-ph.plotHawkes(tev, lambda_0, alpha_0, w, T, 10000)
+plotHawkes(tev, lambda_0, alpha_0, w, T, 10000.0)
 plt.ion()  # Make the plot interactive
 plt.show() # Show the plot. May not be needed in IPython
 
@@ -126,7 +124,7 @@ prob = CVX.Problem(
                                 for_cvx=True)),
     constraints=constraints)
 
-res = prob.solve(verbose=True)
+result = prob.solve(verbose=True)
 
 
 error_alpha = (alpha_opt.value - alpha_0) if alpha_0 > 0 else 0
