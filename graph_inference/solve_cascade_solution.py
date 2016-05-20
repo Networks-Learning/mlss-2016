@@ -112,3 +112,7 @@ for target_node in range(num_nodes):
     else:
         A[:, target_node] = -1
 
+
+A_soln = np.loadtxt('solution.csv', delimiter=',')
+
+print(U.calc_score(A, A_soln))
