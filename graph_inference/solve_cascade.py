@@ -96,8 +96,14 @@ for target_node in range(num_nodes):
                 # anything about the incoming edges.
                 log_sum = 0
                 for j in range(len(c)):
-                    # TODO
-                    pass
+                    t_j = c[j][0]
+                    alpha_ji = Ai[c[j][1]]
+
+                    if t_j < t_i:
+                        # TODO
+                        # expr += ...
+                        # log_sum += ...
+                        pass
 
                 expr += CVX.log(log_sum)
 
