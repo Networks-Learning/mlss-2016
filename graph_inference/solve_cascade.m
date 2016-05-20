@@ -67,4 +67,6 @@ for target_node = 1:num_nodes % Distributed
     A(:, target_node) = Ai;
 end
 
+A_soln = dlmread('solution.csv'); % This is the true A matrix.
+
 [F1, precision, recall] = calc_score(A, A_soln, 1e-6)
