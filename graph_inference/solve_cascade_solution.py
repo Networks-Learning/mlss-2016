@@ -4,6 +4,7 @@ import csv
 import numpy as np
 import cvxpy as CVX
 from collections import defaultdict
+import utils as U
 
 # This file has been changed from a script friendly format to an interactive
 # session friendly version.
